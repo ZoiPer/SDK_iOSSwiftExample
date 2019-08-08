@@ -43,12 +43,12 @@ class AccountViewController: UIViewController, UITextFieldDelegate {
     
     @IBAction func activateTapped(_ sender: Any) {
         guard activationUsername != nil else {
-            print("Activation user name text field is nil.")
+            appLogger.logError(.lf_UI, message: "Activation user name text field is nil.")
             return
         }
         
         guard activationPassword != nil else {
-            print("Activation password text field is nil.")
+            appLogger.logError(.lf_UI, message: "Activation password text field is nil.")
             return
         }
         
@@ -79,17 +79,17 @@ class AccountViewController: UIViewController, UITextFieldDelegate {
         }
         
         guard accountDomain != nil else {
-            print("Account domain text field is nil.")
+            appLogger.logError(.lf_UI, message: "Account domain text field is nil.")
             return
         }
         
         guard accountUsername != nil else {
-            print("Account user name text field is nil.")
+            appLogger.logError(.lf_UI, message: "Account user name text field is nil.")
             return
         }
         
         guard accountPassword != nil else {
-            print("Account password text field is nil.")
+            appLogger.logError(.lf_UI, message: "Account password text field is nil.")
             return
         }
         

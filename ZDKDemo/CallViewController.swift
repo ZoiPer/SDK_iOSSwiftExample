@@ -28,13 +28,13 @@ class CallViewController: UIViewController, UITextFieldDelegate {
 
     @IBAction func dialTapped(_ sender: Any) {
         guard numberToDial != nil else {
-            print("Number to dial text field is nil.")
+            appLogger.logError(.lf_UI, message: "Number to dial text field is nil.")
             return
         }
         
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         if appDelegate.contextManager.isInCall() {
-            print("Hanging call up...")
+            appLogger.logInfo(.lf_UI, message: "Hanging call up...")
             appDelegate.contextManager.hangupCall()
             return
         }

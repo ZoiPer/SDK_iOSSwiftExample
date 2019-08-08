@@ -72,7 +72,7 @@ class ContextManager: NSObject {
             do {
                 try FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: true, attributes: nil)
             } catch {
-                print(error.localizedDescription);
+                appLogger.logError(.lf_UI, message: error.localizedDescription);
             }
         }
         
@@ -102,9 +102,9 @@ class ContextManager: NSObject {
                                                   version: zdkVersion,
                                                   certPem: certPem)
         if result.code != .rc_Ok {
-            print("Failed to start activation: \(result.text) (code: \(result.code.rawValue))")
+            appLogger.logError(.lf_Softphone, message: "Failed to start activation: \(result.text) (code: \(result.code.rawValue))")
         } else {
-            print("Activation started.")
+            appLogger.logInfo(.lf_Softphone, message: "Activation started.")
         }
     }
     
@@ -112,9 +112,9 @@ class ContextManager: NSObject {
     func startContext() -> ZDKResult {
         let result = context.start()
         if result.code == .rc_Ok {
-            print("ZDK context is started.")
+            appLogger.logInfo(.lf_Softphone, message: "ZDK context is started.")
         } else {
-            print("ZDK context failed to start, code: \(result.code.rawValue).")
+            appLogger.logError(.lf_Softphone, message: "ZDK context failed to start, code: \(result.code.rawValue).")
         }
         
         return result
@@ -157,7 +157,7 @@ class ContextManager: NSObject {
     private func createAccountWithDomain(_ domain: String, username: String, andPassword password: String) -> ZDKAccount? {
         zdkAccount = zdkAccountProvider.createUserAccount()
         guard zdkAccount != nil else {
-            print( "Failed to create ZDK account." )
+            appLogger.logError(.lf_Softphone, message: "Failed to create ZDK account." )
             return nil
         }
         
@@ -172,7 +172,7 @@ class ContextManager: NSObject {
         
         accountConfiguration.sip = createDefaultSIPConfiguration()
         guard accountConfiguration.sip != nil else {
-            print("Failed to create SIP configuration.")
+            appLogger.logError(.lf_Softphone, message: "Failed to create SIP configuration.")
             zdkAccount = nil
             return nil
         }
@@ -194,7 +194,7 @@ class ContextManager: NSObject {
         var result : ZDKResult
         
         guard context.contextRunning else {
-            print("Cannot register account- ZDK context is not started.")
+            appLogger.logError(.lf_Softphone, message: "Cannot register account- ZDK context is not started.")
             return
         }
         
@@ -202,13 +202,13 @@ class ContextManager: NSObject {
             createAccountWithDomain(domain, username: username, andPassword: password)
             
             guard zdkAccount != nil else {
-                print("Cannot register account- ZDK Account is nil!")
+                appLogger.logError(.lf_Softphone, message: "Cannot register account- ZDK Account is nil!")
                 return
             }
             zdkAccount!.removeUser()
             result = zdkAccount!.createUser()
             if result.code != .rc_Ok {
-                print("Failed to create ZDK account- \(result.text), code: \(result.code.rawValue).")
+                appLogger.logError(.lf_Softphone, message: "Failed to create ZDK account- \(result.text), code: \(result.code.rawValue).")
                 return;
             }
             
@@ -220,10 +220,10 @@ class ContextManager: NSObject {
         if zdkAccount!.registrationStatus == .as_Registered {
             result = zdkAccount!.unRegister()
             if result.code != .rc_Ok {
-                print("Failed to unregsiter ZDK account- \(result.text), code: \(result.code.rawValue).")
+                appLogger.logError(.lf_Softphone, message: "Failed to unregsiter ZDK account- \(result.text), code: \(result.code.rawValue).")
                 return;
             }
-            print("Unregistering ZDK account...")
+            appLogger.logInfo(.lf_Softphone, message: "Unregistering ZDK account...")
         } else {
             // Update account data
             let config = zdkAccount!.configuration
@@ -234,10 +234,10 @@ class ContextManager: NSObject {
             
             result = zdkAccount!.register()
             if result.code != .rc_Ok {
-                print("Failed to register ZDK account- \(result.text), code: \(result.code.rawValue).")
+                appLogger.logError(.lf_Softphone, message: "Failed to register ZDK account- \(result.text), code: \(result.code.rawValue).")
                 return;
             }
-            print("Registering ZDK account...")
+            appLogger.logInfo(.lf_Softphone, message: "Registering ZDK account...")
         }
     }
     
@@ -247,15 +247,15 @@ class ContextManager: NSObject {
     
     func hangupCall() {
         guard zdkCall != nil else {
-            print("Cannot hang-up non-existing call!")
+            appLogger.logWarning(.lf_Softphone, message: "Cannot hang-up non-existing call!")
             return
         }
         
         let result = zdkCall?.hangUp()
         if result!.code != .rc_Ok {
-            print("Hang-up call, something went wrong- \(result!.description), code: \(result!.code.rawValue)")
+            appLogger.logError(.lf_Softphone, message: "Hang-up call, something went wrong- \(result!.description), code: \(result!.code.rawValue)")
         } else {
-            print("Call hung up successfully.")
+            appLogger.logInfo(.lf_Softphone, message: "Call hung up successfully.")
         }
         
         zdkCall?.dropStatusListener(self)
@@ -264,25 +264,25 @@ class ContextManager: NSObject {
     
     func makeCallTo(callee:String) {
         guard context.contextRunning else {
-            print("Cannot make a call- ZDK context is not started.")
+            appLogger.logError(.lf_Softphone, message: "Cannot make a call- ZDK context is not started.")
             return
         }
         
         guard zdkAccount != nil else {
-            print("Cannot make a call- please create an account.")
+            appLogger.logWarning(.lf_Softphone, message: "Cannot make a call- please create an account.")
             return
         }
         
         guard context.callsProvider.activeCall == nil else {
-            print("There is already an active call.")
+            appLogger.logWarning(.lf_Softphone, message: "There is already an active call.")
             return
         }
 
-        print("Dialling \(callee)...")
+        appLogger.logInfo(.lf_Softphone, message: "Dialling \(callee)...")
         
         zdkCall = zdkAccount?.createCall(callee, handlingVoipPhoneCallEvents: true, video: false)
         guard zdkCall != nil else {
-            print("Something went wrong, failed to create a call!")
+            appLogger.logError(.lf_Softphone, message: "Something went wrong, failed to create a call!")
             return
         }
         zdkCall?.setCallStatusListener(self)
@@ -316,7 +316,7 @@ extension ContextManager: ZDKContextEventsHandler {
             strStatus = "Failed, code: " + String(describing: activationResult.status.rawValue)
         }
         
-        print("Activation completed- \"\(activationResult.reason), \(strStatus)\"")
+        appLogger.logInfo(.lf_Softphone, message: "Activation completed- \"\(activationResult.reason), \(strStatus)\"")
         
         if activationResult.status == .as_Success {
             self.performSelector(onMainThread: #selector(startContext), with: nil, waitUntilDone: false)
@@ -329,9 +329,9 @@ extension ContextManager: ZDKContextEventsHandler {
 extension ContextManager: ZDKAccountEventsHandler {
     func onAccount(_ account: ZDKAccount, status: ZDKAccountStatus, changed statusCode: Int32) {
         if statusCode != 0 {
-            print("Account '\(String(describing: account.accountName!))' status change to \(status.rawValue) failed, code: \(statusCode).")
+            appLogger.logError(.lf_Softphone, message: "Account '\(String(describing: account.accountName!))' status change to \(status.rawValue) failed, code: \(statusCode).")
         } else {
-            print("Successfully changed account '\(String(describing: account.accountName!))' status to \(status.rawValue).")
+            appLogger.logInfo(.lf_Softphone, message: "Successfully changed account '\(String(describing: account.accountName!))' status to \(status.rawValue).")
         }
         
         let title : String
@@ -345,7 +345,7 @@ extension ContextManager: ZDKAccountEventsHandler {
     }
     
     func onAccount(_ account: ZDKAccount, extendedError message: ZDKExtendedError) {
-        print("'\(String(describing: account.accountName!))' extended error: \(message.message), q931 Code: \(message.q931Code).")
+        appLogger.logError(.lf_Softphone, message: "'\(String(describing: account.accountName!))' extended error: \(message.message), q931 Code: \(message.q931Code).")
     }
 }
 
@@ -354,10 +354,10 @@ extension ContextManager: ZDKAccountEventsHandler {
 extension ContextManager: ZDKCallEventsHandler {
     func onCall(_ call: ZDKCall, statuschanged status: ZDKCallStatus) {
         DispatchQueue.main.async {
-            print("Call status changed: \(status.description), code: \(status.lineStatus.rawValue)")
+            appLogger.logInfo(.lf_Softphone, message: "Call status changed: \(status.description), code: \(status.lineStatus.rawValue)")
             
             if status.origin == .ot_Remote && status.lineStatus == .cls_Active {
-                print("The call is answered")
+                appLogger.logInfo(.lf_Softphone, message: "The call is answered")
             }
             
             if status.lineStatus == .cls_Terminated {
@@ -369,6 +369,6 @@ extension ContextManager: ZDKCallEventsHandler {
     }
     
     func onCall(_ call: ZDKCall, extendedError error: ZDKExtendedError) {
-        print("Call to '\(String(describing: call.calleeNumber))' extended error: \(error.message), q931 Code: \(error.q931Code).")
+        appLogger.logError(.lf_Softphone, message: "Call to '\(String(describing: call.calleeNumber))' extended error: \(error.message), q931 Code: \(error.q931Code).")
     }
 }
