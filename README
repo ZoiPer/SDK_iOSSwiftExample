@@ -1,2 +1,6 @@
+To be able to run the Zoiper Swift Example, you will need to include the zdk.objc.framework to the project and then to build it. 
+By default zdk.objc.framework is not included in the example. 
+If you still don't have the framework, please contact us on zoiper.com.
+
 zdk.objc.framework MUST be placed in current folder!
 
