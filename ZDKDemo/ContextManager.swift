@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 let zdkVersion = "ZDK for iOS 2.0"
 let documentsDirPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last!.path + "/"
@@ -92,19 +93,13 @@ class ContextManager: NSObject {
                       "xU+U6NFcvqbNpGEF5O6yi90CAwEAAQ==\n" +
                       "-----END PUBLIC KEY-----\n"
         
-        let result =  zdkContext.activation.start(cacheFile,
-                                                  moduleName: nil,
-                                                  // 0x10 - E_ACTIVATION_FLAG_USE_V4_CERTIFICATE
-                                                  // 0x2  - E_ACTIVATION_FLAG_SKIP_CHECKSUM_VERIFICATION
-                                                  opFlags: 0x10 + 0x2,
-                                                  username: username,
-                                                  password: password,
-                                                  version: zdkVersion,
-                                                  certPem: certPem)
+        let result = zdkContext.activation.startSDK(cacheFile, username: username, password: password)
+        
         if result.code != .rc_Ok {
             appLogger.logError(.lf_Softphone, message: "Failed to start activation: \(result.text) (code: \(result.code.rawValue))")
         } else {
             appLogger.logInfo(.lf_Softphone, message: "Activation started.")
+
         }
     }
     
@@ -318,9 +313,22 @@ extension ContextManager: ZDKContextEventsHandler {
         
         appLogger.logInfo(.lf_Softphone, message: "Activation completed- \"\(activationResult.reason), \(strStatus)\"")
         
+        var strActivateionResult : String = ""
+        var color : UIColor = UIColor.red
+        
         if activationResult.status == .as_Success {
             self.performSelector(onMainThread: #selector(startContext), with: nil, waitUntilDone: false)
+            
+            strActivateionResult = "Activated"
+            color = UIColor.green
+            accountViewController?.performSelector(onMainThread: #selector(accountViewController?.changeActivationStatusLabelTitleTo), with: strActivateionResult, waitUntilDone: false)
+            accountViewController?.performSelector(onMainThread: #selector(accountViewController?.changeActivationStatusLabelColorTo), with: color, waitUntilDone: false)
+
+        } else {
+            accountViewController?.performSelector(onMainThread: #selector(accountViewController?.changeActivationStatusLabelTitleTo), with: strActivateionResult, waitUntilDone: false)
+            accountViewController?.activationStatusLabel.text = String(describing: activationResult.status)
         }
+    
     }
 }
 
@@ -328,10 +336,16 @@ extension ContextManager: ZDKContextEventsHandler {
 
 extension ContextManager: ZDKAccountEventsHandler {
     func onAccount(_ account: ZDKAccount, status: ZDKAccountStatus, changed statusCode: Int32) {
+        var registrationStatus : String = "Not Registered"
+        var registrationColor : UIColor = UIColor.red
+        
         if statusCode != 0 {
             appLogger.logError(.lf_Softphone, message: "Account '\(String(describing: account.accountName!))' status change to \(status.rawValue) failed, code: \(statusCode).")
+            registrationStatus = "Error \(statusCode)"
         } else {
             appLogger.logInfo(.lf_Softphone, message: "Successfully changed account '\(String(describing: account.accountName!))' status to \(status.rawValue).")
+            registrationStatus = "Registered"
+            registrationColor = UIColor.green
         }
         
         let title : String
@@ -342,6 +356,9 @@ extension ContextManager: ZDKAccountEventsHandler {
         }
         
         accountViewController?.performSelector(onMainThread: #selector(accountViewController?.changeRegisterButtonTitleTo), with: title, waitUntilDone: false)
+        accountViewController?.performSelector(onMainThread: #selector(accountViewController?.changeRegistrationStatusLabelTitleTo), with: registrationStatus, waitUntilDone: false)
+        accountViewController?.performSelector(onMainThread: #selector(accountViewController?.changeRegistrationStatusLabelColorTo), with: registrationColor, waitUntilDone: false)
+
     }
     
     func onAccount(_ account: ZDKAccount, extendedError message: ZDKExtendedError) {

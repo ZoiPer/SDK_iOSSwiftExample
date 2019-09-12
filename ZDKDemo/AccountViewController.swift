@@ -13,10 +13,12 @@ class AccountViewController: UIViewController, UITextFieldDelegate {
 
     @IBOutlet weak var activationUsername: UITextField?
     @IBOutlet weak var activationPassword: UITextField?
+    @IBOutlet weak var activationStatusLabel: UILabel!
     
     @IBOutlet weak var accountDomain:   UITextField?
     @IBOutlet weak var accountUsername: UITextField?
     @IBOutlet weak var accountPassword: UITextField?
+    @IBOutlet weak var registrationStatusLabel: UILabel!
     
     @IBOutlet weak var btnRegister: UIButton?
     
@@ -30,6 +32,26 @@ class AccountViewController: UIViewController, UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         self.view.endEditing(true)
         return false
+    }
+    
+    @objc
+    func changeActivationStatusLabelTitleTo(_ title: String) {
+        activationStatusLabel?.text = title
+    }
+    
+    @objc
+    func changeActivationStatusLabelColorTo(_ color: UIColor) {
+        activationStatusLabel?.textColor = color
+    }
+    
+    @objc
+    func changeRegistrationStatusLabelTitleTo(_ title: String) {
+        registrationStatusLabel?.text = title
+    }
+    
+    @objc
+    func changeRegistrationStatusLabelColorTo(_ color: UIColor) {
+        registrationStatusLabel?.textColor = color
     }
     
     @objc
@@ -64,6 +86,13 @@ class AccountViewController: UIViewController, UITextFieldDelegate {
         
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         appDelegate.contextManager.activateZDK(zdkVersion, withUserName: activationUsername!.text!, andPassword: activationPassword!.text!)
+/*
+        if appDelegate.contextManager.activateZDK(zdkVersion, withUserName: activationUsername!.text!, andPassword: activationPassword!.text!)
+        {
+            self.activationStatusLabel.text = "Activated";
+            self.activationStatusLabel.textColor = UIColor.green;
+        } */
+        
     }
     
     @IBAction func registerTapped(_ sender: AnyObject) {
