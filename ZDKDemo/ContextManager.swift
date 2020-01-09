@@ -12,23 +12,27 @@ let zdkVersion = "ZDK for iOS 2.0"
 let documentsDirPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last!.path + "/"
 
 enum CodecId: Int {
-    case NA = -1
-    case uLaw = 0
-    case GSM = 1
-    case aLaw = 6
-    case g722 = 7
-    case g729 = 16
-    case speex = 24
-    case speexWide = 25
-    case speexUltra = 26
-    case iLBC30 = 27
-    case g726 = 29
-    case h263Plus = 30
-    case vp8 = 31
-    case opusNarrow = 34
-    case opusWide = 35
-    case opusSuper = 36
-    case opusFull = 37
+    case NA
+    case g729
+    case GSM
+    case iLBC20
+    case iLBC30
+    case h264
+    case vp8
+    case h264Hardware
+    case speex
+    case speexWide
+    case speexUltra
+    case g726
+    case opusNarrow
+    case opusWide
+    case opusSuper
+    case opusFull
+    case AMR
+    case AMRWide
+    case uLaw
+    case aLaw
+    case g722
 }
 
 class ContextManager: NSObject {
