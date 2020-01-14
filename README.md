@@ -88,7 +88,7 @@ The SDK consists of an iOS Framework with the respective headers that you can ea
 
 ## Setting up the Demo project
 
-The demo application for Objective-C — Zoiper SDK Demo — gives you a clear idea on how to implement functionalities of the Zoiper Software Development Kit for iOS. 
+The demo application for Swift — Zoiper SDK Demo — gives you a clear idea on how to implement functionalities of the Zoiper Software Development Kit for iOS. 
 After the initialization of the Zoiper SDK 2.0 Demo, you can configure and register an account on a SIP server. Upon success, you can make an
 audio call. 
 The Demo illustrates how...
