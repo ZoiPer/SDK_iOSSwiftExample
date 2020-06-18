@@ -216,9 +216,92 @@ Possible values:
 - disabled
 
 #### Push notifications
+To change the PUSH configuration, you will need to adjust the calls in:
 ```
-sipConfiguration.enablePushNotifications = false sipConfiguration.pushTransport = .tt_TCP
+private func createDefaultPushConfiguration() -> ZDKPushConfig
 ```
+You can adjust the push configuration by using the following method calls.
+##### Sets the use of push notifications
+```
+pushConfiguration.enabled = false
+```
+##### Sets the use of RTP media proxy
+```
+pushConfiguration.rtpMediaProxy = false
+```
+##### Application - Proxy communication protocol
+```
+pushConfiguration.transport = .tt_TCP
+```
+##### Application's bundle identifier
+```
+pushConfiguration.cid = Bundle.main.bundleIdentifier!
+```
+##### The URI of push apple server
+```
+pushConfiguration.uri = "https://gateway.push.apple.com:2195"
+```
+##### Type
+```
+pushConfiguration.type = "apple"
+```
+##### Push proxy address
+```
+pushConfiguration.proxy = "www.push_proxy.com"
+```
+##### Push token
+```
+pushConfiguration.token = "a6954b367dc0d28308a92dff76b7041abf9193e834bafd50cee0222068cb632b"
+```
+
+#### Header fields
+To change the header fields configuration, you will need to adjust the calls in:
+```
+private func createSIPHeaderFieldsConfiguration() -> [ZDKHeaderField]
+```
+You can adjust the values by using the following method calls.
+```
+header1Values.append("header_1_value_1")
+
+header2Values.append("header_2_value_1")
+header2Values.append("header_2_value_2")
+
+header3Values.append("header_3_value_1")
+header3Values.append("header_3_value_2")
+header3Values.append("header_3_value_3")
+
+header4Values.append("header_4_value_1")
+header4Values.append("header_4_value_2")
+header4Values.append("header_4_value_3")
+header4Values.append("header_4_value_4")
+header4Values.append("header_4_value_5")
+```
+You can adjust the name and set a header by using the following method calls.
+```
+headers.append(zdkAccountProvider.createSIPHeaderField("test_header_1", values: header1Values, method: .smt_All))
+
+headers.append(zdkAccountProvider.createSIPHeaderField("test_header_2", values: header2Values, method: .smt_Register))
+
+headers.append(zdkAccountProvider.createSIPHeaderField("test_header_3", values: header3Values, method: .smt_Invite))
+
+headers.append(zdkAccountProvider.createSIPHeaderField("test_header_4", values: header4Values, method: .smt_All))
+```
+Possible method values:
+
+| Method |
+|----------|
+|smt_None|
+|smt_Invite|
+|smt_Notify|
+|smt_Options|
+|smt_Register|
+|smt_Subscribe|
+|smt_Message|
+|smt_Info|
+|smt_Publish|
+|smt_Service|
+|smt_All|
+
 #### Changing the used codecs
 ```
 zdkAccount!.mediaCodecs = [CodecId.uLaw.rawValue as NSNumber,
