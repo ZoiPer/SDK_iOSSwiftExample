@@ -144,12 +144,58 @@ class ContextManager: NSObject {
         sipConfiguration.enableSRTP = false
         sipConfiguration.dtmf       = .dtmftsip_RFC_2833
         
-        sipConfiguration.enablePushNotifications = false
-        sipConfiguration.pushTransport           = .tt_TCP
-        
         sipConfiguration.stun = createDefaultSTUNConfiguration()
         
         return sipConfiguration
+    }
+    
+    private func createDefaultPushConfiguration() -> ZDKPushConfig {
+        let pushConfiguration = zdkAccountProvider.createPushConfiguration()
+        
+        pushConfiguration.enabled = false // Use of push notification
+        pushConfiguration.rtpMediaProxy = false // Use of RTP media proxy
+        pushConfiguration.transport = .tt_TCP // "iOS App - Push proxy" communication protocol
+        pushConfiguration.cid = Bundle.main.bundleIdentifier! // App's bundle identifier!
+        pushConfiguration.uri = "https://gateway.push.apple.com:2195" // For sandbox use https://gateway.sandbox.push.apple.com:2195
+        pushConfiguration.type = "apple" // Example type
+        pushConfiguration.proxy = "www.push_proxy.com" // Example push proxy server
+        pushConfiguration.token = "a6954b367dc0d28308a92dff76b7041abf9193e834bafd50cee0222068cb632b" // Example push token. Take it from the app!
+                        
+        return pushConfiguration
+    }
+    
+    static var changeTest: Bool = false
+    private func createSIPHeaderFieldsConfiguration() -> [ZDKHeaderField] {
+        var headers: [ZDKHeaderField] = [ZDKHeaderField]()
+        
+        var header1Values: [String] = [String]()
+        header1Values.append("header_1_value_1")
+        headers.append(zdkAccountProvider.createSIPHeaderField("test_header_1", values: header1Values, method: .smt_All))
+        
+        var header2Values: [String] = [String]()
+        header2Values.append("header_2_value_1")
+        header2Values.append("header_2_value_2")
+        headers.append(zdkAccountProvider.createSIPHeaderField("test_header_2", values: header2Values, method: .smt_Register))
+        
+        var header3Values: [String] = [String]()
+        header3Values.append("header_3_value_1")
+        header3Values.append("header_3_value_2")
+        header3Values.append("header_3_value_3")
+        headers.append(zdkAccountProvider.createSIPHeaderField("test_header_3", values: header3Values, method: .smt_Invite))
+        
+        var header4Values: [String] = [String]()
+        header4Values.append("header_4_value_1")
+        header4Values.append("header_4_value_2")
+        header4Values.append("header_4_value_3")
+        if ContextManager.changeTest {
+            header4Values.append("header_4_value_4")
+        } else {
+            header4Values.append("header_4_value_5")
+        }
+        ContextManager.changeTest = !ContextManager.changeTest
+        headers.append(zdkAccountProvider.createSIPHeaderField("test_header_4", values: header4Values, method: .smt_All))
+        
+        return headers
     }
     
     @discardableResult
@@ -176,6 +222,10 @@ class ContextManager: NSObject {
             return nil
         }
         accountConfiguration.sip!.domain = domain
+        
+        accountConfiguration.sip?.push = createDefaultPushConfiguration()
+        
+        accountConfiguration.sip?.additionalHeaders = createSIPHeaderFieldsConfiguration()
         
         zdkAccount!.configuration = accountConfiguration
         zdkAccount!.mediaCodecs = [CodecId.uLaw.rawValue as NSNumber,
