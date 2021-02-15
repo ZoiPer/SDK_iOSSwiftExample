@@ -346,10 +346,10 @@ initContext()
 }
 
 func initContext() {
-zdkContext.configuration.sipPort = Int32.random(in: 32000..<65000)
+zdkContext.configuration.sipUdpPort = Int32.random(in: 32000..<65000)
 repeat {
 zdkContext.configuration.rtpPort = Int32.random(in: 32000..<65000)
-} while (zdkContext.configuration.rtpPort != zdkContext.configuration.sipPort) zdkContext.audioControls.echoCancellation = .ect_Hardware zdkContext.audioControls.automaticGainControl = .agct_Hardware zdkContext.configuration.enableIPv6 = true
+} while (zdkContext.configuration.rtpPort != zdkContext.configuration.sipUdpPort) zdkContext.audioControls.echoCancellation = .ect_Hardware zdkContext.audioControls.automaticGainControl = .agct_Hardware zdkContext.configuration.enableIPv6 = true
 }
 ```
 Keep in mind that inside the initialization of the Context, the SIP and RTP ports will be also initialized. Right after this, you can best activate the Zoiper SDK 2.0 license. Use the activation username and password you received from Zoiper.com. You can complete the activation by invoking the activateZDK method as follows:

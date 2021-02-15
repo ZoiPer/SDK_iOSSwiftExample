@@ -61,10 +61,10 @@ class ContextManager: NSObject {
     }
     
     func initContext() {
-        zdkContext.configuration.sipPort = Int32.random(in: 32000..<65000)
+        zdkContext.configuration.sipUdpPort = Int32.random(in: 32000..<65000)
         repeat {
             zdkContext.configuration.rtpPort = Int32.random(in: 32000..<65000)
-        } while (zdkContext.configuration.rtpPort != zdkContext.configuration.sipPort)
+        } while (zdkContext.configuration.rtpPort != zdkContext.configuration.sipUdpPort)
         
         zdkContext.audioControls.echoCancellation     = .ect_Hardware
         zdkContext.audioControls.automaticGainControl = .agct_Hardware
