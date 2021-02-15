@@ -339,17 +339,23 @@ To use Zoiper SDK 2.0 in your iOS project, you need to add it as a required fram
 
 ```
 override init() {
-zdkContext = HelperFactory.sharedInstance().context zdkAccountProvider = HelperFactory.sharedInstance().context.accountProvider
-super.init()
-zdkContext.setStatusListener(self)
-initContext()
+    zdkContext = HelperFactory.sharedInstance().context
+    zdkAccountProvider = HelperFactory.sharedInstance().context.accountProvider
+    super.init()
+    zdkContext.setStatusListener(self)
+    initContext()
 }
 
 func initContext() {
-zdkContext.configuration.sipUdpPort = Int32.random(in: 32000..<65000)
-repeat {
-zdkContext.configuration.rtpPort = Int32.random(in: 32000..<65000)
-} while (zdkContext.configuration.rtpPort != zdkContext.configuration.sipUdpPort) zdkContext.audioControls.echoCancellation = .ect_Hardware zdkContext.audioControls.automaticGainControl = .agct_Hardware zdkContext.configuration.enableIPv6 = true
+    zdkContext.configuration.sipUdpPort = Int32.random(in: 32000..<65000)
+    repeat {
+        zdkContext.configuration.rtpPort = Int32.random(in: 32000..<65000)
+    } while (zdkContext.configuration.rtpPort != zdkContext.configuration.sipUdpPort)
+
+    zdkContext.audioControls.setAutomaticGainControlMode(.agct_Hardware, gain: 0.0)
+    zdkContext.audioControls.echoCancellation     = .ect_Hardware
+    zdkContext.audioControls.noiseSuppression     = true
+    zdkContext.configuration.enableIPv6           = true
 }
 ```
 Keep in mind that inside the initialization of the Context, the SIP and RTP ports will be also initialized. Right after this, you can best activate the Zoiper SDK 2.0 license. Use the activation username and password you received from Zoiper.com. You can complete the activation by invoking the activateZDK method as follows:

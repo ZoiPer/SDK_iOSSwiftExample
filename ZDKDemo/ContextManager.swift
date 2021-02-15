@@ -66,8 +66,9 @@ class ContextManager: NSObject {
             zdkContext.configuration.rtpPort = Int32.random(in: 32000..<65000)
         } while (zdkContext.configuration.rtpPort != zdkContext.configuration.sipUdpPort)
         
+        zdkContext.audioControls.setAutomaticGainControlMode(.agct_Hardware, gain: 0.0)
         zdkContext.audioControls.echoCancellation     = .ect_Hardware
-        zdkContext.audioControls.automaticGainControl = .agct_Hardware
+        zdkContext.audioControls.noiseSuppression     = true
         zdkContext.configuration.enableIPv6           = true
     }
     
