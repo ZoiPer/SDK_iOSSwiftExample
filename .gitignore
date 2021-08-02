@@ -1,0 +1,8 @@
+## Various settings
+xcuserdata
+*.xcworkspace
+zdk.objc*
+
+# macOS specific files
+.DS_Store
+
