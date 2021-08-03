@@ -350,7 +350,7 @@ extension ContextManager: ZDKContextEventsHandler {
         return String()
     }
     
-    func onContext(_ context: ZDKContext, secureCerterror secureCert: ZDKSecureCertData) {
+    func onContext(_ context: ZDKContext, secureCertstatus secureCert: ZDKSecureCertData) {
         
     }
     
