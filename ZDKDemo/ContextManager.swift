@@ -120,6 +120,18 @@ class ContextManager: NSObject {
         return result
     }
     
+    @discardableResult @objc
+    func stopContext() -> ZDKResult {
+        let result = context.stop()
+        if result.code == .rc_Ok {
+            appLogger.logInfo(.lf_Softphone, message: "ZDK context is stopped.")
+        } else {
+            appLogger.logError(.lf_Softphone, message: "ZDK context failed to stop, code: \(result.code.rawValue).")
+        }
+        
+        return result
+    }
+    
     private func createDefaultSTUNConfiguration() ->ZDKStunConfig {
         let stunConfiguration = zdkAccountProvider.createStunConfiguration()
         stunConfiguration.stunEnabled = false
