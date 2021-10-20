@@ -59,7 +59,8 @@ Please contact [<span style="color:orange">sales@zoiper.com</span>](mailto:sales
 ## Introduction to Zoiper SDK 2.0 for iOS
 
 Developing your VoIP application for iOS with Objective-C™, or Swift becomes easier with the Zoiper Software Development Kit for iOS.
-Zoiper SDK 2.0 is namely an all-inclusive solution for developing iOS applications with
+Zoiper SDK 2.0 is namely an all-inclusive solution for developing iOS applications with:
+
 - audio calls (SIP, IAX)
 - video call (SIP)
 - presence
@@ -75,10 +76,10 @@ The SDK consists of an iOS Framework with the respective headers that you can ea
 |Processor|Intel Core i3 or better|
 |Memory|4GB (minimum), 8 GB (recommended)|
 |Hard disk space|1 GB|
-|Xcode®|Xcode 9 or later|
-|Operating system (Development environment)|macOS 10.13 or later|
-|Operating system (Runtime environment)|iOS 8 or later|
-|Architecture|armv7, armv7s, arm64|
+|Xcode®|Xcode 12 or later|
+|Operating system (Development environment)|macOS 10.15 or later|
+|Operating system (Runtime environment)|iOS 12 or later|
+|Architecture|arm64|
 |Mode|Live device|
 ### Contents of the SDK package
 | Folder | Description |
@@ -130,7 +131,8 @@ zdk.objc.framework MUST be placed in current folder!
 
 ### Default configuration
 Transport type: TCP
-Enabled codecs: 
+Enabled codecs:
+
 - aLaw
 - uLaw
 - GSM
@@ -140,6 +142,7 @@ Enabled codecs:
 - VP8
 
 STUN: Disabled
+
 Default STUN settings:
 
 - Server: stun.zoiper.com
@@ -150,15 +153,16 @@ Default STUN settings:
 
 To test the demo, you need activation credentials from Zoiper. You can enter them manually, or hardcode them in your application. 
 
-#####Manual
+##### Manual
 
 Enter your username and password in the Activation fields and click on the “Activate” button.
 
 When the activation is fine, the status will change to “Success”. If it is not successful a “Failed” status will be returned, followed by an error code.
 
-#####Hardcoded
+##### Hardcoded
 
 To hardcode your credentials, use the following call:
+
 ```
 let appDelegate = UIApplication.shared.delegate as! AppDelegate appDelegate.contextManager.activateZDK(zdkVersion,
 withUserName: activationUsername!.text!,
@@ -217,6 +221,7 @@ Possible values:
 
 #### Push notifications
 To change the PUSH configuration, you will need to adjust the calls in:
+
 ```
 private func createDefaultPushConfiguration() -> ZDKPushConfig
 ```
@@ -256,10 +261,12 @@ pushConfiguration.token = "a6954b367dc0d28308a92dff76b7041abf9193e834bafd50cee02
 
 #### Header fields
 To change the header fields configuration, you will need to adjust the calls in:
+
 ```
 private func createSIPHeaderFieldsConfiguration() -> [ZDKHeaderField]
 ```
 You can adjust the values by using the following method calls.
+
 ```
 header1Values.append("header_1_value_1")
 
@@ -276,7 +283,9 @@ header4Values.append("header_4_value_3")
 header4Values.append("header_4_value_4")
 header4Values.append("header_4_value_5")
 ```
+
 You can adjust the name and set a header by using the following method calls.
+
 ```
 headers.append(zdkAccountProvider.createSIPHeaderField("test_header_1", values: header1Values, method: .smt_All))
 
@@ -361,6 +370,7 @@ func initContext() {
 Keep in mind that inside the initialization of the Context, the SIP and RTP ports will be also initialized. Right after this, you can best activate the Zoiper SDK 2.0 license. Use the activation username and password you received from Zoiper.com. You can complete the activation by invoking the activateZDK method as follows:
 
 activateZDK method like so:
+
 ```
 contextManager.activateZDK(zdkVersion,
 withUserName: activationUsername,
