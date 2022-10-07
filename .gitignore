@@ -1,5 +1,6 @@
 ## Various settings
 xcuserdata
+xcshareddata
 *.xcworkspace
 zdk.objc*
 
