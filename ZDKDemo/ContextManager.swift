@@ -155,7 +155,6 @@ class ContextManager: NSObject {
         sipConfiguration.callerID   = accountName
         sipConfiguration.rPort      = .rpt_Signaling
         sipConfiguration.enableSRTP = false
-        sipConfiguration.dtmf       = .dtmftsip_RFC_2833
         
         sipConfiguration.stun = createDefaultSTUNConfiguration()
         
@@ -237,6 +236,8 @@ class ContextManager: NSObject {
         accountConfiguration.sip!.domain = domain
         
         accountConfiguration.sip?.push = createDefaultPushConfiguration()
+        
+        accountConfiguration.dtmfBand = .dtmft_SignallingOutband
         
         accountConfiguration.sip?.additionalHeaders = createSIPHeaderFieldsConfiguration()
         
