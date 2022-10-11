@@ -68,14 +68,19 @@ class AppLogger: NSObject {
         let versionNumber = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
         let buildNumber = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as! String
         let iosVersion = UIDevice.current.systemVersion
+        
         var utsStruct = utsname()
-        let deviceVersion = uname(&utsStruct) == 0 ? String(cString: &utsStruct.machine.0, encoding: String.Encoding.utf8)!
-                                                   : "Unknown"
+        uname(&utsStruct)
+        let machineMirror = Mirror(reflecting: utsStruct.machine)
+        let deviceIdentifier = machineMirror.children.reduce("") { identifier, element in
+            guard let value = element.value as? Int8, value != 0 else { return identifier }
+            return identifier + String(UnicodeScalar(UInt8(value)))
+        }
         
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         
         var info = "\n\nZDKDemo \(versionNumber).\(buildNumber) for iOS\n"
-        info.append("Library revision: \(appDelegate.contextManager.context.libraryVersion), iOS version: \(iosVersion), Device: \(deviceVersion)\n\n")
+        info.append("Library revision: \(appDelegate.contextManager.context.libraryVersion), iOS version: \(iosVersion), Device: \(deviceIdentifier)\n\n")
         
         return info
     }
