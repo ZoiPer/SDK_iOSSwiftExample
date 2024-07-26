@@ -419,8 +419,12 @@ extension ContextManager: ZDKAccountEventsHandler {
         let title : String
         if status == .as_Registered {
             title = "Unregister"
+            registrationStatus = "Registered"
+            registrationColor = UIColor.green
         } else {
             title = "Register"
+            registrationStatus = "Not registered"
+            registrationColor = UIColor.red
         }
         
         accountViewController?.performSelector(onMainThread: #selector(accountViewController?.changeRegisterButtonTitleTo), with: title, waitUntilDone: false)
