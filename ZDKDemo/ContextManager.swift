@@ -433,6 +433,36 @@ extension ContextManager: ZDKAccountEventsHandler {
 
     }
     
+    func onAccount(_ account: any ZDKAccount, incomingCall call: any ZDKCall) {
+        call.ringing()
+        
+        DispatchQueue.main.async {
+            self.zdkCall = call
+            self.zdkCall?.setCallStatusListener(self)
+            
+            let alert = UIAlertController(title: "Incoming call", message: "Incoming call from \(call.calleeName) <\(call.calleeNumber)>", preferredStyle: .alert)
+            
+            let OKAction = UIAlertAction(title: "Answer", style: .default) { (action) in
+                self.zdkCall?.accept()
+                callViewController?.changeDialButtonTitleTo("Hangup")
+            }
+            
+            let CancelAction = UIAlertAction(title: "Reject", style: .default) { (action) in
+                self.zdkCall?.hangUp()
+            }
+            
+            alert.addAction(OKAction)
+            alert.addAction(CancelAction)
+            
+            let appDelegate = UIApplication.shared.delegate as! AppDelegate
+            if let tabBarController = appDelegate.window?.rootViewController as? UITabBarController {
+                if let selectedViewController = tabBarController.selectedViewController {
+                    selectedViewController.present(alert, animated: true, completion: nil)
+                }
+            }
+        }
+    }
+    
     func onAccount(_ account: ZDKAccount, extendedError message: ZDKExtendedError) {
         appLogger.logError(.lf_Softphone, message: "'\(String(describing: account.accountName!))' extended error: \(message.message), q931 Code: \(message.q931Code).")
     }
